@@ -5,7 +5,7 @@
 
 #   the used tools
 APXS=/usr/sbin/apxs
-APACHECTL=apachectl
+APACHECTL=$(shell which apachectl)
 
 #   additional user defines, includes and libraries
 #DEF=-Dmy_define=my_value
@@ -13,7 +13,7 @@ APACHECTL=apachectl
 #LIB=-Lmy/lib/dir -lmylib
 
 #   the default target
-all: mod_dosdetector.so
+all: mod_dosdetector.so mod_dosdetector_syslog.so
 
 #   compile the DSO file
 mod_dosdetector.so: mod_dosdetector.c
@@ -37,9 +37,9 @@ reload: install restart
 
 #   the general Apache start/restart/stop procedures
 start:
-	$(APACHECTL) start
+	@$(APACHECTL) start
 restart:
-	$(APACHECTL) restart
+	@$(APACHECTL) restart
 stop:
-	$(APACHECTL) stop
+	@$(APACHECTL) stop
 
