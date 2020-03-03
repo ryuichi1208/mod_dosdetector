@@ -107,6 +107,8 @@ static char shm_name[L_tmpnam];
 static apr_global_mutex_t *lock = NULL;
 static apr_shm_t *shm = NULL;
 
+static int xfer_flags = (APR_WRITE | APR_APPEND | APR_CREATE | APR_LARGEFILE);
+static apr_fileperms_t xfer_perms = APR_OS_DEFAULT;
 
 static apr_status_t cleanup_shm(void *not_used)
 {
@@ -135,6 +137,7 @@ static void log_and_cleanup(char *msg, apr_status_t status, server_rec *s)
 static void create_shm(server_rec *s,apr_pool_t *p)
 {	
     int threaded_mpm;
+    apr_status_t rv;
     ap_mpm_query(AP_MPMQ_IS_THREADED, &threaded_mpm);
     //if (threaded_mpm) {
 	tmpnam(lock_name);
@@ -170,6 +173,12 @@ static void create_shm(server_rec *s,apr_pool_t *p)
 	client_list->head = client_list->base;
 	client_t *c = client_list->base;
 	int i;
+	rv = apr_file_open(&fd, fname, xfer_flags, xfer_perms, p);
+	if (rv != APR_SUCCESS) {
+            ap_log_error(APLOG_MARK, APLOG_ERR, rv, s, APLOGNO(00649)
+                            "could not open transfer log file %s.", fname);
+            return NULL;
+        }
 
 	for (i = 1; i < table_size; i++) {
 		c->next = (c + 1);
