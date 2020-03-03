@@ -533,7 +533,7 @@ module AP_MODULE_DECLARE_DATA dosdetector_module = {
     dosdetector_create_dir_config, /* create per-dir config structures */
     NULL,			/* merge  per-dir    config structures */
     NULL,			/* create per-server config structures */
-    NULL,			/* merge  per-server config structures */
+    make_config_log_state,	/* merge  per-server config structures */
     dosdetector_cmds,		/* table of config file commands       */
     register_hooks
 };
